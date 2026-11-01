@@ -7,7 +7,7 @@ import CountryDetails from './components/CountryDetails';
 import { CountryContext } from './context/CountryContext';
 
 function App() {
-  const { countries, fetchCountries } = useContext(CountryContext);
+  const { countries, fetchCountries, loading, error } = useContext(CountryContext);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const searchTerm = searchParams.get("search") || "";
@@ -15,10 +15,11 @@ function App() {
 
   useEffect(() => {
     fetchCountries(); // تحميل الدول عند بداية تشغيل التطبيق
-  }, []);
+  }, [fetchCountries]);
 
-  const filtered = countries.filter((country) =>
-    country.name.common.toLowerCase().includes(searchTerm.toLowerCase()) &&
+  const countryList = Array.isArray(countries) ? countries : [];
+  const filtered = countryList.filter((country) =>
+    country.name?.common?.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (region === "" || country.region === region)
   );
 
@@ -35,7 +36,9 @@ function App() {
                 region={region}
                 setSearchParams={setSearchParams}
               />
-              <CountriesList countries={filtered} />
+              {loading && <p style={{ textAlign: "center", padding: "2rem" }}>Loading countries...</p>}
+              {error && <p style={{ textAlign: "center", color: "red", padding: "1rem" }}>{error}</p>}
+              {!loading && <CountriesList countries={filtered} />}
             </>
           }
         />
