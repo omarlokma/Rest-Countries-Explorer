@@ -10,8 +10,9 @@ function CountryDetails() {
   const { countries, fetchCountries, loading } = useContext(CountryContext);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (countries.length === 0) fetchCountries();
-  }, [countries, fetchCountries]);
+  }, [name, countries, fetchCountries]);
 
   const country = countries.find(
     (c) => c.name?.common?.toLowerCase() === decodedName.toLowerCase()

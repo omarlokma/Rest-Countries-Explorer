@@ -1,10 +1,24 @@
 import { useEffect, useContext, useMemo } from 'react';
-import { Routes, Route, useSearchParams } from 'react-router-dom';
+import { Routes, Route, useSearchParams, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import SearchFilter from './components/SearchFilter';
 import CountriesList from './components/CountriesList';
 import CountryDetails from './components/CountryDetails';
 import { CountryContext } from './context/CountryContext';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant',
+    });
+  }, [pathname]);
+
+  return null;
+}
 
 function App() {
   const { countries, fetchCountries, loading, error } = useContext(CountryContext);
@@ -42,7 +56,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[var(--color-canvas)] text-[var(--color-ink)] flex flex-col font-sans transition-colors duration-300">
-      
+      <ScrollToTop />
       {/* Navigation Header */}
       <Header />
 
