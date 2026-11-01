@@ -47,7 +47,9 @@
   }
 
   /* ── Dark Mode ── */
-  body.dark {
+  html.dark,
+  body.dark,
+  .dark {
     --color-canvas: #09090B;
     --color-surface: #121214;
     --color-surface-dim: #1A1A1D;
