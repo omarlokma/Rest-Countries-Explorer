@@ -1,6 +1,6 @@
 # World Countries Explorer
 
-A professional web application that provides comprehensive geopolitical, demographic, and territorial data on nations and territories across the globe. Built with React 19, Tailwind CSS v4, and the REST Countries API, featuring a minimal editorial design, dynamic routing, and persistent theming.
+A web application that provides comprehensive geopolitical, demographic, and territorial data on nations and territories across the globe. Built with React 19, Tailwind CSS v4, and the REST Countries API, featuring a minimal editorial design, dynamic routing, and persistent theming.
 
 ## Live Demo
 
