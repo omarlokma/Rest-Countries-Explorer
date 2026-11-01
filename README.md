@@ -1,25 +1,53 @@
-World Explorer (Rest Countries API)
-A professional web application that provides comprehensive data on every country in the world. This project demonstrates advanced React techniques, including global state management, dynamic routing, and sophisticated UI/UX features like theme switching.
+# World Countries Explorer
 
-🔗 Live Demo
+A professional web application that provides comprehensive geopolitical, demographic, and territorial data on nations and territories across the globe. Built with React 19, Tailwind CSS v4, and the REST Countries API, featuring a minimal editorial design, dynamic routing, and persistent theming.
+
+## Live Demo
+
 You can view the live version of this project here: [Try Now](https://omarlokma.github.io/Rest-Countries-Explorer/)
 
-🚀 Key Features
->API-Driven Data: Fetches real-time, accurate country statistics from the REST Countries V3.1 API.
+## Key Features
 
->Dynamic Theming: Features a native Dark/Light mode toggle that applies theme changes across the entire application.
+- API-Driven Data: Integrates with the REST Countries API (v5) with built-in client caching and automatic fallback support for 100% uptime.
+- Theme Persistence: Native Light and Dark mode toggle with zero-flash initial loading via localStorage and system color scheme detection.
+- Search and Filtering: Real-time search across common names, official names, capitals, and ISO 3166 codes, paired with region-based filtering.
+- Detailed Country Dossiers: Dedicated page for every country showcasing demographics, capital cities, surface landmass, currencies, official languages, top-level domains, and neighboring border nations.
+- Seamless Navigation: Route-aware automatic scroll reset on page transitions and interactive links between bordering countries.
+- Responsive Layout: Built with an analytical 12-column grid and mobile-first architecture for an optimal experience across all device sizes.
 
->Search & Discovery: Allows users to search for specific countries by name and filter them by region.
+## Tech Stack
 
->Detailed Routing: Each country has its own dedicated page displaying in-depth information such as population,capital, and flags.
+- Core: React 19
+- Build Tool: Vite
+- Styling: Tailwind CSS v4
+- Routing: React Router DOM (v7)
+- State Management: React Context API
 
->Responsive Architecture: Built with a mobile-first approach using CSS Grid and Flexbox to ensure a seamless experience on all devices.
+## Getting Started
 
-🛠 Tech Stack
->Core: React 19.
+### Prerequisites
 
->State Management: Context API to handle global data.
+Node.js (version 18 or higher recommended)
 
->Routing: React Router DOM for multi-page navigation.
+### Installation
 
->Styling: Pure CSS3 with modern animations and transitions.
+1. Clone the repository:
+```bash
+git clone https://github.com/omarlokma/Rest-Countries-Explorer.git
+cd Rest-Countries-Explorer
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
+npm run dev
+```
+
+4. Build for production:
+```bash
+npm run build
+```
