@@ -10,19 +10,73 @@ function mapV5Country(c) {
   const flagSvg = c.flag?.url_svg || (alpha2 ? `https://flagcdn.com/${alpha2}.svg` : "");
   const flagPng = c.flag?.url_png || (alpha2 ? `https://flagcdn.com/w320/${alpha2}.png` : "");
 
+  // Currencies formatting
+  let currenciesList = [];
+  if (Array.isArray(c.currencies)) {
+    currenciesList = c.currencies.map((cur) => cur.name ? `${cur.name} (${cur.symbol || cur.code || ''})` : cur).filter(Boolean);
+  } else if (typeof c.currencies === 'object' && c.currencies !== null) {
+    currenciesList = Object.values(c.currencies).map((cur) => cur.name ? `${cur.name} (${cur.symbol || ''})` : cur);
+  }
+
+  // Languages formatting
+  let languagesList = [];
+  if (Array.isArray(c.languages)) {
+    languagesList = c.languages.map((l) => l.name || l).filter(Boolean);
+  } else if (typeof c.languages === 'object' && c.languages !== null) {
+    languagesList = Object.values(c.languages);
+  }
+
   return {
     name: {
       common: c.names?.common || "",
       official: c.names?.official || "",
     },
     region: c.region || "",
+    subregion: c.subregion || "",
     capital: Array.isArray(c.capitals) ? c.capitals.map((cap) => cap.name).filter(Boolean) : [],
     population: typeof c.population === "number" ? c.population : 0,
+    area: typeof c.area === "number" ? c.area : 0,
     flags: {
       svg: flagSvg,
       png: flagPng,
     },
+    cca2: c.codes?.alpha_2 || "",
     cca3: c.codes?.alpha_3 || "",
+    currencies: currenciesList,
+    languages: languagesList,
+    borders: Array.isArray(c.borders) ? c.borders : [],
+    tld: Array.isArray(c.tlds) ? c.tlds : [],
+    timezones: Array.isArray(c.timezones) ? c.timezones : [],
+  };
+}
+
+function normalizeV3Country(c) {
+  const currenciesList = c.currencies
+    ? Object.values(c.currencies).map((cur) => cur.name ? `${cur.name} (${cur.symbol || ''})` : cur)
+    : [];
+
+  const languagesList = c.languages
+    ? Object.values(c.languages)
+    : [];
+
+  return {
+    name: {
+      common: c.name?.common || "",
+      official: c.name?.official || "",
+    },
+    region: c.region || "",
+    subregion: c.subregion || "",
+    capital: Array.isArray(c.capital) ? c.capital : [],
+    population: typeof c.population === "number" ? c.population : 0,
+    area: typeof c.area === "number" ? c.area : 0,
+    flags: c.flags || {},
+    cca2: c.cca2 || "",
+    cca3: c.cca3 || "",
+    currencies: currenciesList,
+    languages: languagesList,
+    borders: Array.isArray(c.borders) ? c.borders : [],
+    tld: Array.isArray(c.tld) ? c.tld : [],
+    timezones: Array.isArray(c.timezones) ? c.timezones : [],
   };
 }
 
@@ -32,7 +86,6 @@ export function CountryProvider({ children }) {
   const [error, setError] = useState(null);
 
   const fetchCountries = useCallback(async () => {
-    // 1. استخدام التخزين المؤقت أولاً لتفادي استهلاك حد الطلبات الشهري (1000 طلب/شهر في الخطة المجانية)
     try {
       const cached = localStorage.getItem(CACHE_KEY);
       if (cached) {
@@ -43,14 +96,13 @@ export function CountryProvider({ children }) {
         }
       }
     } catch {
-      // تجاوز أي خطأ في localStorage
+      // ignore
     }
 
     setLoading(true);
     setError(null);
 
     try {
-      // 2. طلب البيانات من الإصدار الخامس الجديد v5 في حال توفر الـ API Key
       if (API_KEY) {
         const headers = { Authorization: `Bearer ${API_KEY}` };
         const pages = await Promise.all([
@@ -73,28 +125,28 @@ export function CountryProvider({ children }) {
         }
       }
 
-      throw new Error("استخدام المصدر البديل");
+      throw new Error("Using fallback data source");
     } catch (err) {
-      console.warn("جاري استخدام المصدر الاحتياطي للبيانات:", err);
+      console.warn("Using fallback country data:", err);
 
-      // 3. مصدر احتياطي مباشر في حال عدم توفر المفتاح أو نفاد الكوتة الشهرية
       try {
         const fallbackRes = await fetch(
           "https://raw.githubusercontent.com/restcountries/restcountries/master/src/main/resources/countriesV3.1.json"
         );
         const fallbackData = await fallbackRes.json();
         if (Array.isArray(fallbackData)) {
-          setCountries(fallbackData);
+          const formatted = fallbackData.map(normalizeV3Country);
+          setCountries(formatted);
           try {
-            localStorage.setItem(CACHE_KEY, JSON.stringify(fallbackData));
+            localStorage.setItem(CACHE_KEY, JSON.stringify(formatted));
           } catch {
             // ignore
           }
           return;
         }
       } catch (fallbackErr) {
-        console.error("فشل المصدر الاحتياطي أيضاً:", fallbackErr);
-        setError("تعذر تحميل بيانات الدول");
+        console.error("Fallback error:", fallbackErr);
+        setError("Failed to load country data.");
       }
     } finally {
       setLoading(false);
